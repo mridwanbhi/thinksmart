@@ -1,4 +1,4 @@
-name: Build and Deploy Digital Garden
+name: Publish Digital Garden
 
 on:
   push:
@@ -6,27 +6,20 @@ on:
       - main
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repo
+      - name: Checkout
         uses: actions/checkout@v3
-
-      - name: Setup Node
-        uses: actions/setup-node@v3
         with:
-          node-version: 18
+          persist-credentials: false
 
-      - name: Install Digital Garden CLI
-        run: npm install -g digitalgarden-cli
-
-      - name: Build site
-        run: digitalgarden build
+      - name: Install rsync
+        run: sudo apt-get install rsync
 
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_branch: gh-pages
-          publish_dir: _site
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: gh-pages
+          folder: docs
